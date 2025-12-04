@@ -31,7 +31,12 @@
 
         <div class="content">
             <div class="map-container">
-                <div id="map"></div>
+                <div class="map-tabs">
+                    <button class="map-tab active" data-map="kakao">카카오맵</button>
+                    <button class="map-tab" data-map="google">구글맵</button>
+                </div>
+                <div id="kakaoMap" class="map-view active"></div>
+                <div id="googleMap" class="map-view"></div>
             </div>
 
             <div class="info-panel">
