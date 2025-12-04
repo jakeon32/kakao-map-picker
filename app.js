@@ -80,6 +80,11 @@ function initMap() {
     map = new kakao.maps.Map(container, options);
     geocoder = new kakao.maps.services.Geocoder();
 
+    // 지도 크기 재조정 (컨테이너 크기 인식)
+    setTimeout(() => {
+        map.relayout();
+    }, 100);
+
     // 지도 클릭 이벤트
     kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
         const latlng = mouseEvent.latLng;
