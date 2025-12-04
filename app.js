@@ -34,6 +34,7 @@ async function loadKakaoApiKey() {
         }
 
         kakaoApiKey = data.apiKey;
+        console.log('API 키 로드 성공');
     } catch (error) {
         console.error('API 키 로드 오류:', error);
         throw error;
@@ -49,13 +50,21 @@ function loadKakaoMapScript() {
         }
 
         const script = document.createElement('script');
-        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoApiKey}&libraries=services&autoload=false`;
+        const scriptUrl = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoApiKey}&libraries=services&autoload=false`;
+        console.log('카카오맵 스크립트 로드 시도:', scriptUrl.replace(kakaoApiKey, 'xxxxx'));
+
+        script.src = scriptUrl;
         script.onload = () => {
+            console.log('카카오맵 스크립트 로드 완료');
             window.kakao.maps.load(() => {
+                console.log('카카오맵 초기화 완료');
                 resolve();
             });
         };
-        script.onerror = () => reject(new Error('카카오맵 스크립트 로드 실패'));
+        script.onerror = (error) => {
+            console.error('스크립트 로드 실패 상세:', error);
+            reject(new Error('카카오맵 스크립트 로드 실패'));
+        };
         document.head.appendChild(script);
     });
 }
