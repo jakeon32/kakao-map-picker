@@ -404,6 +404,8 @@ header p {
     box-shadow: var(--shadow-lg);
     position: relative;
     transition: all var(--transition-base);
+    font-size: 0;
+    line-height: 0;
 }
 
 .map-container:hover {
