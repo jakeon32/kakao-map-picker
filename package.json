@@ -1,0 +1,18 @@
+{
+  "name": "kakao-map-picker",
+  "version": "1.0.0",
+  "description": "카카오맵을 이용한 주소 검색 및 좌표 픽킹 웹 애플리케이션",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "kakao",
+    "map",
+    "coordinates",
+    "geocoding"
+  ],
+  "author": "",
+  "license": "MIT"
+}

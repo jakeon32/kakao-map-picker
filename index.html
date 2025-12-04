@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>카카오맵 주소 검색 및 좌표 픽킹</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📍 카카오맵 좌표 검색</h1>
+            <p>주소를 검색하거나 지도를 클릭하여 위도/경도를 확인하세요</p>
+        </header>
+
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="주소를 입력하세요 (예: 서울시 강남구 테헤란로)">
+                <button id="searchBtn">검색</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+
+            <div class="info-panel">
+                <div class="info-section">
+                    <h3>📌 선택된 위치 정보</h3>
+                    <div class="info-item">
+                        <label>주소:</label>
+                        <div class="info-value">
+                            <span id="addressText">지도를 클릭하세요</span>
+                            <button class="copy-btn" id="copyAddress" title="주소 복사">📋</button>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <label>위도 (Latitude):</label>
+                        <div class="info-value">
+                            <span id="latText">-</span>
+                            <button class="copy-btn" id="copyLat" title="위도 복사">📋</button>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <label>경도 (Longitude):</label>
+                        <div class="info-value">
+                            <span id="lngText">-</span>
+                            <button class="copy-btn" id="copyLng" title="경도 복사">📋</button>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <label>좌표 (위도, 경도):</label>
+                        <div class="info-value">
+                            <span id="coordsText">-</span>
+                            <button class="copy-btn" id="copyCoords" title="좌표 복사">📋</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="instructions">
+                    <h4>사용 방법</h4>
+                    <ul>
+                        <li>검색창에 주소를 입력하고 검색하세요</li>
+                        <li>지도를 클릭하여 정확한 위치를 선택하세요</li>
+                        <li>📋 버튼을 클릭하여 정보를 복사하세요</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

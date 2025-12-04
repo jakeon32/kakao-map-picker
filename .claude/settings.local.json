@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nInitial commit: 카카오맵 주소 검색 및 좌표 픽킹 웹사이트\n\n- 카카오맵 API를 활용한 주소 검색 기능\n- 지도 클릭으로 위도/경도 선택 기능\n- 클립보드 복사 기능 구현\n- Vercel 서버리스 함수로 API 키 보호\n- 반응형 디자인 적용\nEOF\n)\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
