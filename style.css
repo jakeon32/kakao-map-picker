@@ -493,6 +493,12 @@ header p {
     transform: translateY(0);
 }
 
+.map-tab:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 /* Map Views */
 .map-view {
     flex: 1;

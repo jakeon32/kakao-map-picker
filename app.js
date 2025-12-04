@@ -3,34 +3,49 @@ let kakaoMap, googleMap;
 let kakaoMarker, googleMarker;
 let geocoder, places;
 let kakaoApiKey, googleApiKey;
-let currentMapType = 'kakao'; // 현재 활성화된 지도
+let currentMapType = null; // 현재 활성화된 지도
 let currentPosition = null; // 현재 선택된 좌표
+let availableMaps = { kakao: false, google: false }; // 사용 가능한 지도 추적
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', async () => {
+    // 카카오맵 초기화 시도
     try {
-        // API 키 가져오기
-        await Promise.all([
-            loadKakaoApiKey(),
-            loadGoogleApiKey()
-        ]);
-
-        // 카카오맵 스크립트 동적 로드
+        await loadKakaoApiKey();
         await loadKakaoMapScript();
-
-        // 구글맵 스크립트 동적 로드
-        await loadGoogleMapScript();
-
-        // 지도 초기화
         initKakaoMap();
-        initGoogleMap();
-
-        // 이벤트 리스너 설정
-        setupEventListeners();
+        availableMaps.kakao = true;
+        console.log('카카오맵 초기화 성공');
     } catch (error) {
-        console.error('초기화 오류:', error);
-        showToast('지도를 로드하는 중 오류가 발생했습니다.', 'error');
+        console.error('카카오맵 초기화 실패:', error);
+        disableMapTab('kakao');
     }
+
+    // 구글맵 초기화 시도
+    try {
+        await loadGoogleApiKey();
+        await loadGoogleMapScript();
+        initGoogleMap();
+        availableMaps.google = true;
+        console.log('구글맵 초기화 성공');
+    } catch (error) {
+        console.error('구글맵 초기화 실패:', error);
+        disableMapTab('google');
+    }
+
+    // 기본 지도 설정
+    if (availableMaps.kakao) {
+        currentMapType = 'kakao';
+    } else if (availableMaps.google) {
+        currentMapType = 'google';
+        switchMap('google');
+    } else {
+        showToast('사용 가능한 지도가 없습니다. API 키를 확인해주세요.', 'error');
+        return;
+    }
+
+    // 이벤트 리스너 설정
+    setupEventListeners();
 });
 
 // 카카오 API 키 로드
@@ -148,8 +163,8 @@ function initKakaoMap() {
         updateKakaoMarker(latlng);
         getAddressFromKakaoCoords(latlng);
 
-        // 구글맵도 같은 위치로 업데이트
-        if (googleMap) {
+        // 구글맵도 같은 위치로 업데이트 (사용 가능한 경우)
+        if (availableMaps.google && googleMap) {
             updateGoogleMapPosition(lat, lng);
         }
     });
@@ -174,8 +189,8 @@ function initGoogleMap() {
         updateGoogleMarker(event.latLng);
         getAddressFromGoogleCoords(lat, lng);
 
-        // 카카오맵도 같은 위치로 업데이트
-        if (kakaoMap) {
+        // 카카오맵도 같은 위치로 업데이트 (사용 가능한 경우)
+        if (availableMaps.kakao && kakaoMap) {
             updateKakaoMapPosition(lat, lng);
         }
     });
@@ -277,6 +292,17 @@ function getAddressFromGoogleCoords(lat, lng) {
     });
 }
 
+// 지도 탭 비활성화
+function disableMapTab(mapType) {
+    const tab = document.querySelector(`[data-map="${mapType}"]`);
+    if (tab) {
+        tab.disabled = true;
+        tab.style.opacity = '0.5';
+        tab.style.cursor = 'not-allowed';
+        tab.title = `${mapType === 'kakao' ? '카카오맵' : '구글맵'} API 키가 설정되지 않았습니다`;
+    }
+}
+
 // 주소 및 장소 검색
 function searchAddress() {
     const searchInput = document.getElementById('searchInput');
@@ -287,10 +313,17 @@ function searchAddress() {
         return;
     }
 
-    if (currentMapType === 'kakao') {
+    if (!currentMapType) {
+        showToast('사용 가능한 지도가 없습니다', 'error');
+        return;
+    }
+
+    if (currentMapType === 'kakao' && availableMaps.kakao) {
         searchOnKakaoMap(keyword);
-    } else {
+    } else if (currentMapType === 'google' && availableMaps.google) {
         searchOnGoogleMap(keyword);
+    } else {
+        showToast('현재 지도를 사용할 수 없습니다', 'error');
     }
 }
 
@@ -316,8 +349,8 @@ function searchOnKakaoMap(keyword) {
             // 좌표로 주소 가져오기
             getAddressFromKakaoCoords(coords);
 
-            // 구글맵도 동기화
-            if (googleMap) {
+            // 구글맵도 동기화 (사용 가능한 경우)
+            if (availableMaps.google && googleMap) {
                 updateGoogleMapPosition(lat, lng);
             }
 
@@ -339,8 +372,8 @@ function searchOnKakaoMap(keyword) {
                     updateKakaoMarker(coords);
                     document.getElementById('addressText').textContent = result[0].address_name;
 
-                    // 구글맵도 동기화
-                    if (googleMap) {
+                    // 구글맵도 동기화 (사용 가능한 경우)
+                    if (availableMaps.google && googleMap) {
                         updateGoogleMapPosition(lat, lng);
                     }
 
@@ -384,8 +417,8 @@ function searchOnGoogleMap(keyword) {
                 getAddressFromGoogleCoords(lat, lng);
             }
 
-            // 카카오맵도 동기화
-            if (kakaoMap) {
+            // 카카오맵도 동기화 (사용 가능한 경우)
+            if (availableMaps.kakao && kakaoMap) {
                 updateKakaoMapPosition(lat, lng);
             }
 
@@ -398,6 +431,12 @@ function searchOnGoogleMap(keyword) {
 
 // 지도 전환
 function switchMap(mapType) {
+    // 사용 가능한 지도인지 확인
+    if (!availableMaps[mapType]) {
+        showToast(`${mapType === 'kakao' ? '카카오맵' : '구글맵'}을 사용할 수 없습니다`, 'error');
+        return;
+    }
+
     currentMapType = mapType;
 
     // 탭 active 상태 변경
@@ -420,7 +459,7 @@ function switchMap(mapType) {
                 kakaoMap.setCenter(position);
             }
         }, 100);
-    } else {
+    } else if (mapType === 'google') {
         document.getElementById('googleMap').classList.add('active');
         setTimeout(() => {
             google.maps.event.trigger(googleMap, 'resize');
@@ -449,6 +488,10 @@ function setupEventListeners() {
     // 지도 탭 전환
     document.querySelectorAll('.map-tab').forEach(tab => {
         tab.addEventListener('click', () => {
+            // 비활성화된 탭은 클릭 무시
+            if (tab.disabled) {
+                return;
+            }
             const mapType = tab.getAttribute('data-map');
             switchMap(mapType);
         });
