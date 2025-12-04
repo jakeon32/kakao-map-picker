@@ -404,8 +404,8 @@ header p {
     box-shadow: var(--shadow-lg);
     position: relative;
     transition: all var(--transition-base);
-    font-size: 0;
-    line-height: 0;
+    height: calc(100vh - 300px);
+    min-height: 500px;
 }
 
 .map-container:hover {
@@ -416,10 +416,8 @@ header p {
 
 #map {
     width: 100%;
-    height: calc(100vh - 300px);
-    min-height: 500px;
+    height: 100%;
     display: block;
-    vertical-align: top;
 }
 
 /* ========================================
@@ -617,7 +615,7 @@ header p {
         display: grid;
     }
 
-    #map {
+    .map-container {
         height: 500px;
     }
 }
@@ -658,7 +656,7 @@ header p {
         bottom: var(--spacing-md);
     }
 
-    #map {
+    .map-container {
         height: 400px;
     }
 
