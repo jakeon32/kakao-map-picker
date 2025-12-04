@@ -42,6 +42,103 @@
 }
 
 /* ========================================
+   Light Mode (System Preference)
+   ======================================== */
+@media (prefers-color-scheme: light) {
+    :root {
+        /* 라이트모드 색상 팔레트 - Bright & Clean with Vibrant Accents */
+        --color-primary: #f8fafc;
+        --color-secondary: #f1f5f9;
+        --color-accent: #0ea5e9;
+        --color-accent-secondary: #06b6d4;
+        --color-text: #0f172a;
+        --color-text-muted: #64748b;
+        --color-surface: rgba(255, 255, 255, 0.8);
+        --color-surface-light: rgba(14, 165, 233, 0.05);
+
+        /* 그림자 (라이트모드용 조정) */
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.12);
+        --shadow-glow: 0 0 20px rgba(14, 165, 233, 0.25);
+    }
+
+    /* 배경 decoration 조정 */
+    .circle-1 {
+        background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+    }
+
+    .circle-2 {
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
+    }
+
+    .circle-3 {
+        background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+    }
+
+    /* 검색 박스 라이트모드 조정 */
+    .search-box {
+        border: 1px solid rgba(14, 165, 233, 0.15);
+    }
+
+    .search-box:focus-within {
+        border-color: var(--color-accent);
+    }
+
+    /* 인포 패널 및 지도 컨테이너 조정 */
+    .map-container,
+    .info-section,
+    .instructions {
+        border: 1px solid rgba(14, 165, 233, 0.12);
+    }
+
+    .map-container:hover,
+    .info-section:hover,
+    .instructions:hover {
+        border-color: rgba(14, 165, 233, 0.25);
+    }
+
+    /* 인포 값 배경 조정 */
+    .info-value {
+        background: var(--color-surface-light);
+        border: 1px solid rgba(14, 165, 233, 0.08);
+    }
+
+    .info-value:hover {
+        background: rgba(14, 165, 233, 0.1);
+        border-color: rgba(14, 165, 233, 0.2);
+    }
+
+    /* 복사 버튼 라이트모드 */
+    .copy-btn {
+        background: rgba(14, 165, 233, 0.1);
+        border: 1px solid rgba(14, 165, 233, 0.25);
+        color: var(--color-accent);
+    }
+
+    .copy-btn:hover {
+        background: var(--color-accent);
+        color: white;
+    }
+
+    /* 인스트럭션 리스트 */
+    .instructions li {
+        border-bottom: 1px solid rgba(14, 165, 233, 0.08);
+    }
+
+    /* 토스트 라이트모드 */
+    .toast {
+        background: var(--color-surface);
+        border: 1px solid rgba(14, 165, 233, 0.25);
+        color: var(--color-text);
+    }
+
+    .toast.success {
+        border-color: var(--color-accent);
+    }
+}
+
+/* ========================================
    Reset & Base Styles
    ======================================== */
 * {
@@ -61,6 +158,7 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
+    transition: background-color var(--transition-base), color var(--transition-base);
 }
 
 /* ========================================
@@ -83,6 +181,7 @@ body {
     filter: blur(80px);
     opacity: 0.3;
     animation: float 20s ease-in-out infinite;
+    transition: background var(--transition-base);
 }
 
 .circle-1 {
