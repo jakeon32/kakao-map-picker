@@ -416,6 +416,8 @@ header p {
     width: 100%;
     height: calc(100vh - 300px);
     min-height: 500px;
+    display: block;
+    vertical-align: top;
 }
 
 /* ========================================
