@@ -1,6 +1,7 @@
 let map;
 let marker;
 let geocoder;
+let places;
 let kakaoApiKey;
 
 // 페이지 로드 시 초기화
@@ -79,6 +80,7 @@ function initMap() {
 
     map = new kakao.maps.Map(container, options);
     geocoder = new kakao.maps.services.Geocoder();
+    places = new kakao.maps.services.Places();
 
     // 지도 크기 재조정 (컨테이너 크기 인식)
     setTimeout(() => {
@@ -125,30 +127,51 @@ function getAddressFromCoords(coords) {
     });
 }
 
-// 주소로 검색
+// 주소 및 장소 검색
 function searchAddress() {
     const searchInput = document.getElementById('searchInput');
-    const address = searchInput.value.trim();
+    const keyword = searchInput.value.trim();
 
-    if (!address) {
-        showToast('주소를 입력하세요', 'warning');
+    if (!keyword) {
+        showToast('검색어를 입력하세요', 'warning');
         return;
     }
 
-    geocoder.addressSearch(address, (result, status) => {
-        if (status === kakao.maps.services.Status.OK) {
-            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+    // 먼저 키워드(장소명) 검색 시도
+    places.keywordSearch(keyword, (result, status) => {
+        if (status === kakao.maps.services.Status.OK && result.length > 0) {
+            // 키워드 검색 성공
+            const place = result[0];
+            const coords = new kakao.maps.LatLng(place.y, place.x);
 
             // 지도 중심 이동
             map.setCenter(coords);
 
             // 마커 표시 및 정보 업데이트
             updateMarker(coords);
-            document.getElementById('addressText').textContent = result[0].address_name;
 
-            showToast('주소를 찾았습니다', 'success');
+            // 좌표로 주소 가져오기
+            getAddressFromCoords(coords);
+
+            showToast(`'${place.place_name}' 을(를) 찾았습니다`, 'success');
         } else {
-            showToast('주소를 찾을 수 없습니다. 다시 시도해주세요.', 'error');
+            // 키워드 검색 실패 시 주소 검색 시도
+            geocoder.addressSearch(keyword, (result, status) => {
+                if (status === kakao.maps.services.Status.OK) {
+                    const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+                    // 지도 중심 이동
+                    map.setCenter(coords);
+
+                    // 마커 표시 및 정보 업데이트
+                    updateMarker(coords);
+                    document.getElementById('addressText').textContent = result[0].address_name;
+
+                    showToast('주소를 찾았습니다', 'success');
+                } else {
+                    showToast('검색 결과를 찾을 수 없습니다. 다시 시도해주세요.', 'error');
+                }
+            });
         }
     });
 }
