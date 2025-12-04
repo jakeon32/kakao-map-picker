@@ -99,7 +99,8 @@ header p {
 
 #map {
     width: 100%;
-    height: 600px;
+    height: calc(100vh - 280px);
+    min-height: 500px;
 }
 
 .info-panel {
