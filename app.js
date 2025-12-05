@@ -136,6 +136,26 @@ function loadGoogleMapScript() {
     });
 }
 
+// 지도 중심 조정 (UI 높이 고려)
+function adjustMapCenter(mapType, lat, lng) {
+    const card = document.querySelector('.floating-card');
+    if (!card) return;
+
+    const cardHeight = card.offsetHeight;
+    // 카드가 하단에 있으므로, 중심점을 아래로 이동시켜야 실제 지점은 위로 올라감
+    // 화면 높이의 절반 위치에서 카드 높이의 절반만큼 위로 올리는 효과를 내기 위해
+    // 지도 중심을 카드 높이의 절반만큼 아래로 내림 (panBy 0, +offset)
+    const offset = cardHeight / 2;
+
+    if (mapType === 'kakao' && kakaoMap) {
+        // 카카오맵은 panBy가 픽셀 단위 이동
+        kakaoMap.panBy(0, offset);
+    } else if (mapType === 'google' && googleMap) {
+        // 구글맵 panBy도 픽셀 단위 이동
+        googleMap.panBy(0, offset);
+    }
+}
+
 // 카카오맵 초기화
 function initKakaoMap() {
     const container = document.getElementById('kakaoMap');
@@ -162,6 +182,10 @@ function initKakaoMap() {
         currentPosition = { lat, lng };
         updateKakaoMarker(latlng);
         getAddressFromKakaoCoords(latlng);
+        
+        // 클릭한 지점이 중심으로 오도록 이동 후 오프셋 적용
+        kakaoMap.panTo(latlng);
+        setTimeout(() => adjustMapCenter('kakao', lat, lng), 100);
 
         // 구글맵도 같은 위치로 업데이트 (사용 가능한 경우)
         if (availableMaps.google && googleMap) {
@@ -175,7 +199,9 @@ function initGoogleMap() {
     const container = document.getElementById('googleMap');
     const options = {
         center: { lat: 37.5665, lng: 126.9780 }, // 서울 시청
-        zoom: 15
+        zoom: 15,
+        disableDefaultUI: true, // 기본 UI 제거하여 깔끔하게
+        zoomControl: true // 줌 컨트롤은 유지
     };
 
     googleMap = new google.maps.Map(container, options);
@@ -188,6 +214,10 @@ function initGoogleMap() {
         currentPosition = { lat, lng };
         updateGoogleMarker(event.latLng);
         getAddressFromGoogleCoords(lat, lng);
+
+        // 클릭한 지점이 중심으로 오도록 이동 후 오프셋 적용
+        googleMap.panTo(event.latLng);
+        setTimeout(() => adjustMapCenter('google', lat, lng), 100);
 
         // 카카오맵도 같은 위치로 업데이트 (사용 가능한 경우)
         if (availableMaps.kakao && kakaoMap) {
@@ -232,8 +262,9 @@ function updateGoogleMarker(position) {
 
 // 좌표 표시 업데이트
 function updateCoordinateDisplay(lat, lng) {
-    document.getElementById('latText').textContent = lat;
-    document.getElementById('lngText').textContent = lng;
+    document.getElementById('addressText').textContent = 'Loading address...'; // 로딩 표시
+    // document.getElementById('latText').textContent = lat; // Hidden
+    // document.getElementById('lngText').textContent = lng; // Hidden
     document.getElementById('coordsText').textContent = `${lat}, ${lng}`;
 }
 
@@ -241,7 +272,8 @@ function updateCoordinateDisplay(lat, lng) {
 function updateGoogleMapPosition(lat, lng) {
     const position = new google.maps.LatLng(lat, lng);
     googleMap.setCenter(position);
-
+    // 오프셋 적용은 탭 전환 시 또는 명시적 이동 시에만 수행
+    
     if (googleMarker) {
         googleMarker.setMap(null);
     }
@@ -255,6 +287,7 @@ function updateGoogleMapPosition(lat, lng) {
 function updateKakaoMapPosition(lat, lng) {
     const position = new kakao.maps.LatLng(lat, lng);
     kakaoMap.setCenter(position);
+    // 오프셋 적용은 탭 전환 시 또는 명시적 이동 시에만 수행
 
     if (kakaoMarker) {
         kakaoMarker.setMap(null);
@@ -272,7 +305,7 @@ function getAddressFromKakaoCoords(coords) {
             const address = result[0].address.address_name;
             document.getElementById('addressText').textContent = address;
         } else {
-            document.getElementById('addressText').textContent = '주소를 찾을 수 없습니다';
+            document.getElementById('addressText').textContent = 'Address not found';
         }
     });
 }
@@ -287,7 +320,7 @@ function getAddressFromGoogleCoords(lat, lng) {
             const address = results[0].formatted_address;
             document.getElementById('addressText').textContent = address;
         } else {
-            document.getElementById('addressText').textContent = '주소를 찾을 수 없습니다';
+            document.getElementById('addressText').textContent = 'Address not found';
         }
     });
 }
@@ -299,7 +332,7 @@ function disableMapTab(mapType) {
         tab.disabled = true;
         tab.style.opacity = '0.5';
         tab.style.cursor = 'not-allowed';
-        tab.title = `${mapType === 'kakao' ? '카카오맵' : '구글맵'} API 키가 설정되지 않았습니다`;
+        tab.title = `${mapType === 'kakao' ? 'Kakao Map' : 'Google Map'} API key missing`;
     }
 }
 
@@ -309,12 +342,12 @@ function searchAddress() {
     const keyword = searchInput.value.trim();
 
     if (!keyword) {
-        showToast('검색어를 입력하세요', 'warning');
+        showToast('Please enter a location', 'warning');
         return;
     }
 
     if (!currentMapType) {
-        showToast('사용 가능한 지도가 없습니다', 'error');
+        showToast('No map available', 'error');
         return;
     }
 
@@ -338,7 +371,7 @@ function searchAddress() {
     } else if (currentMapType === 'google' && availableMaps.google) {
         searchOnGoogleMap(keyword);
     } else {
-        showToast('현재 지도를 사용할 수 없습니다', 'error');
+        showToast('Current map unavailable', 'error');
     }
 }
 
@@ -351,6 +384,7 @@ function searchByCoordinates(lat, lng) {
         kakaoMap.setCenter(coords);
         updateKakaoMarker(coords);
         getAddressFromKakaoCoords(coords);
+        setTimeout(() => adjustMapCenter('kakao', lat, lng), 100);
 
         // 구글맵 동기화
         if (availableMaps.google && googleMap) {
@@ -362,6 +396,7 @@ function searchByCoordinates(lat, lng) {
         googleMap.setCenter(position);
         updateGoogleMarker(position);
         getAddressFromGoogleCoords(lat, lng);
+        setTimeout(() => adjustMapCenter('google', lat, lng), 100);
 
         // 카카오맵 동기화
         if (availableMaps.kakao && kakaoMap) {
@@ -370,7 +405,7 @@ function searchByCoordinates(lat, lng) {
         }
     }
 
-    showToast('좌표로 이동했습니다', 'success');
+    showToast('Moved to coordinates', 'success');
 }
 
 // 카카오맵에서 검색
@@ -388,6 +423,7 @@ function searchOnKakaoMap(keyword) {
 
             // 지도 중심 이동
             kakaoMap.setCenter(coords);
+            setTimeout(() => adjustMapCenter('kakao', lat, lng), 100);
 
             // 마커 표시 및 정보 업데이트
             updateKakaoMarker(coords);
@@ -400,7 +436,7 @@ function searchOnKakaoMap(keyword) {
                 updateGoogleMapPosition(lat, lng);
             }
 
-            showToast(`'${place.place_name}' 을(를) 찾았습니다`, 'success');
+            showToast(`Found '${place.place_name}'`, 'success');
         } else {
             // 키워드 검색 실패 시 주소 검색 시도
             geocoder.addressSearch(keyword, (result, status) => {
@@ -413,6 +449,7 @@ function searchOnKakaoMap(keyword) {
 
                     // 지도 중심 이동
                     kakaoMap.setCenter(coords);
+                    setTimeout(() => adjustMapCenter('kakao', lat, lng), 100);
 
                     // 마커 표시 및 정보 업데이트
                     updateKakaoMarker(coords);
@@ -423,9 +460,9 @@ function searchOnKakaoMap(keyword) {
                         updateGoogleMapPosition(lat, lng);
                     }
 
-                    showToast('주소를 찾았습니다', 'success');
+                    showToast('Address found', 'success');
                 } else {
-                    showToast('검색 결과를 찾을 수 없습니다. 다시 시도해주세요.', 'error');
+                    showToast('Location not found', 'error');
                 }
             });
         }
@@ -452,6 +489,7 @@ function searchOnGoogleMap(keyword) {
 
             // 지도 중심 이동
             googleMap.setCenter(location);
+            setTimeout(() => adjustMapCenter('google', lat, lng), 100);
 
             // 마커 표시
             updateGoogleMarker(location);
@@ -468,9 +506,9 @@ function searchOnGoogleMap(keyword) {
                 updateKakaoMapPosition(lat, lng);
             }
 
-            showToast(`'${place.name}' 을(를) 찾았습니다`, 'success');
+            showToast(`Found '${place.name}'`, 'success');
         } else {
-            showToast('검색 결과를 찾을 수 없습니다. 다시 시도해주세요.', 'error');
+            showToast('Location not found', 'error');
         }
     });
 }
@@ -479,7 +517,7 @@ function searchOnGoogleMap(keyword) {
 function switchMap(mapType) {
     // 사용 가능한 지도인지 확인
     if (!availableMaps[mapType]) {
-        showToast(`${mapType === 'kakao' ? '카카오맵' : '구글맵'}을 사용할 수 없습니다`, 'error');
+        showToast(`${mapType === 'kakao' ? 'Kakao Map' : 'Google Map'} unavailable`, 'error');
         return;
     }
 
@@ -503,6 +541,7 @@ function switchMap(mapType) {
             if (currentPosition) {
                 const position = new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng);
                 kakaoMap.setCenter(position);
+                setTimeout(() => adjustMapCenter('kakao', currentPosition.lat, currentPosition.lng), 50);
             }
         }, 100);
     } else if (mapType === 'google') {
@@ -512,11 +551,12 @@ function switchMap(mapType) {
             if (currentPosition) {
                 const position = new google.maps.LatLng(currentPosition.lat, currentPosition.lng);
                 googleMap.setCenter(position);
+                setTimeout(() => adjustMapCenter('google', currentPosition.lat, currentPosition.lng), 50);
             }
         }, 100);
     }
 
-    showToast(`${mapType === 'kakao' ? '카카오맵' : '구글맵'}으로 전환되었습니다`, 'info');
+    showToast(`Switched to ${mapType === 'kakao' ? 'Kakao Map' : 'Google Map'}`, 'info');
 }
 
 // 이벤트 리스너 설정
@@ -546,29 +586,29 @@ function setupEventListeners() {
     // 복사 버튼들
     document.getElementById('copyAddress').addEventListener('click', () => {
         const text = document.getElementById('addressText').textContent;
-        copyToClipboard(text, '주소가 복사되었습니다');
+        copyToClipboard(text, 'Address copied');
     });
 
-    document.getElementById('copyLat').addEventListener('click', () => {
-        const text = document.getElementById('latText').textContent;
-        copyToClipboard(text, '위도가 복사되었습니다');
-    });
+    // document.getElementById('copyLat').addEventListener('click', () => {
+    //     const text = document.getElementById('latText').textContent;
+    //     copyToClipboard(text, 'Latitude copied');
+    // });
 
-    document.getElementById('copyLng').addEventListener('click', () => {
-        const text = document.getElementById('lngText').textContent;
-        copyToClipboard(text, '경도가 복사되었습니다');
-    });
+    // document.getElementById('copyLng').addEventListener('click', () => {
+    //     const text = document.getElementById('lngText').textContent;
+    //     copyToClipboard(text, 'Longitude copied');
+    // });
 
     document.getElementById('copyCoords').addEventListener('click', () => {
         const text = document.getElementById('coordsText').textContent;
-        copyToClipboard(text, '좌표가 복사되었습니다');
+        copyToClipboard(text, 'Coordinates copied');
     });
 }
 
 // 클립보드 복사
 async function copyToClipboard(text, message) {
-    if (text === '-' || text === '지도를 클릭하세요') {
-        showToast('복사할 데이터가 없습니다', 'warning');
+    if (text === '-' || text === 'Click on map' || text === 'Loading address...') {
+        showToast('Nothing to copy', 'warning');
         return;
     }
 
@@ -576,8 +616,8 @@ async function copyToClipboard(text, message) {
         await navigator.clipboard.writeText(text);
         showToast(message, 'success');
     } catch (err) {
-        console.error('복사 실패:', err);
-        showToast('복사에 실패했습니다', 'error');
+        console.error('Copy failed:', err);
+        showToast('Copy failed', 'error');
     }
 }
 

@@ -110,8 +110,8 @@ body {
         /* 50% of screen width */
         min-width: 400px;
         /* Minimum readable width */
-        max-width: none;
-        /* Remove constraint */
+        max-width: 800px;
+        /* Maximum width constraint */
     }
 }
 
