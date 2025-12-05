@@ -343,15 +343,40 @@ header p {
 /* ========================================
    Responsive
    ======================================== */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
     .overlay-container {
-        padding: var(--spacing-sm);
+        padding: 0;
         align-items: flex-end;
     }
 
     .floating-card {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
+        width: calc(100% - 2rem);
+        /* Full width with margin */
+        margin-bottom: 1rem;
+        /* Bottom margin */
+        border-radius: var(--radius-lg);
+        /* Keep rounded corners */
         padding: var(--spacing-md);
+        max-height: 60vh;
+        /* Limit height to 60% of screen */
+    }
+
+    /* Hide header on mobile to save space */
+    header {
+        display: none;
+    }
+
+    /* Hide separate lat/lng fields on mobile */
+    .info-grid {
+        display: none;
+    }
+
+    /* Compact spacing */
+    .map-tabs {
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .search-section {
+        margin-bottom: var(--spacing-sm);
     }
 }
