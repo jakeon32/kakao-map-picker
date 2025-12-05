@@ -119,7 +119,7 @@ function loadGoogleMapScript() {
         }
 
         const script = document.createElement('script');
-        const scriptUrl = `https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places`;
+        const scriptUrl = `https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&loading=async`;
 
         script.src = scriptUrl;
         script.async = true;
