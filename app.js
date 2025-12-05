@@ -174,7 +174,7 @@ function initKakaoMap() {
     }, 100);
 
     // 지도 클릭 이벤트
-    kakao.maps.event.addListener(kakaoMap, 'click', function(mouseEvent) {
+    kakao.maps.event.addListener(kakaoMap, 'click', function (mouseEvent) {
         const latlng = mouseEvent.latLng;
         const lat = latlng.getLat();
         const lng = latlng.getLng();
@@ -182,7 +182,7 @@ function initKakaoMap() {
         currentPosition = { lat, lng };
         updateKakaoMarker(latlng);
         getAddressFromKakaoCoords(latlng);
-        
+
         // 클릭한 지점이 중심으로 오도록 이동 후 오프셋 적용
         kakaoMap.panTo(latlng);
         setTimeout(() => adjustMapCenter('kakao', lat, lng), 100);
@@ -262,7 +262,7 @@ function updateGoogleMarker(position) {
 
 // 좌표 표시 업데이트
 function updateCoordinateDisplay(lat, lng) {
-    document.getElementById('addressText').textContent = 'Loading address...'; // 로딩 표시
+    document.getElementById('addressText').textContent = '주소 불러오는 중...'; // 로딩 표시
     // document.getElementById('latText').textContent = lat; // Hidden
     // document.getElementById('lngText').textContent = lng; // Hidden
     document.getElementById('coordsText').textContent = `${lat}, ${lng}`;
@@ -273,7 +273,7 @@ function updateGoogleMapPosition(lat, lng) {
     const position = new google.maps.LatLng(lat, lng);
     googleMap.setCenter(position);
     // 오프셋 적용은 탭 전환 시 또는 명시적 이동 시에만 수행
-    
+
     if (googleMarker) {
         googleMarker.setMap(null);
     }
@@ -305,7 +305,7 @@ function getAddressFromKakaoCoords(coords) {
             const address = result[0].address.address_name;
             document.getElementById('addressText').textContent = address;
         } else {
-            document.getElementById('addressText').textContent = 'Address not found';
+            document.getElementById('addressText').textContent = '주소를 찾을 수 없습니다';
         }
     });
 }
@@ -332,7 +332,7 @@ function disableMapTab(mapType) {
         tab.disabled = true;
         tab.style.opacity = '0.5';
         tab.style.cursor = 'not-allowed';
-        tab.title = `${mapType === 'kakao' ? 'Kakao Map' : 'Google Map'} API key missing`;
+        tab.title = `${mapType === 'kakao' ? '카카오맵' : '구글맵'} API 키가 없습니다`;
     }
 }
 
@@ -342,12 +342,12 @@ function searchAddress() {
     const keyword = searchInput.value.trim();
 
     if (!keyword) {
-        showToast('Please enter a location', 'warning');
+        showToast('장소를 입력해주세요', 'warning');
         return;
     }
 
     if (!currentMapType) {
-        showToast('No map available', 'error');
+        showToast('사용 가능한 지도가 없습니다', 'error');
         return;
     }
 
@@ -371,7 +371,7 @@ function searchAddress() {
     } else if (currentMapType === 'google' && availableMaps.google) {
         searchOnGoogleMap(keyword);
     } else {
-        showToast('Current map unavailable', 'error');
+        showToast('현재 지도를 사용할 수 없습니다', 'error');
     }
 }
 
@@ -405,7 +405,7 @@ function searchByCoordinates(lat, lng) {
         }
     }
 
-    showToast('Moved to coordinates', 'success');
+    showToast('좌표로 이동했습니다', 'success');
 }
 
 // 카카오맵에서 검색
@@ -436,7 +436,7 @@ function searchOnKakaoMap(keyword) {
                 updateGoogleMapPosition(lat, lng);
             }
 
-            showToast(`Found '${place.place_name}'`, 'success');
+            showToast(`'${place.place_name}' 검색 완료`, 'success');
         } else {
             // 키워드 검색 실패 시 주소 검색 시도
             geocoder.addressSearch(keyword, (result, status) => {
@@ -460,9 +460,9 @@ function searchOnKakaoMap(keyword) {
                         updateGoogleMapPosition(lat, lng);
                     }
 
-                    showToast('Address found', 'success');
+                    showToast('주소를 찾았습니다', 'success');
                 } else {
-                    showToast('Location not found', 'error');
+                    showToast('장소를 찾을 수 없습니다', 'error');
                 }
             });
         }
@@ -506,7 +506,7 @@ function searchOnGoogleMap(keyword) {
                 updateKakaoMapPosition(lat, lng);
             }
 
-            showToast(`Found '${place.name}'`, 'success');
+            showToast(`'${place.name}' 검색 완료`, 'success');
         } else {
             showToast('Location not found', 'error');
         }
@@ -517,7 +517,7 @@ function searchOnGoogleMap(keyword) {
 function switchMap(mapType) {
     // 사용 가능한 지도인지 확인
     if (!availableMaps[mapType]) {
-        showToast(`${mapType === 'kakao' ? 'Kakao Map' : 'Google Map'} unavailable`, 'error');
+        showToast(`${mapType === 'kakao' ? '카카오맵' : '구글맵'}을 사용할 수 없습니다`, 'error');
         return;
     }
 
@@ -556,7 +556,7 @@ function switchMap(mapType) {
         }, 100);
     }
 
-    showToast(`Switched to ${mapType === 'kakao' ? 'Kakao Map' : 'Google Map'}`, 'info');
+    showToast(`${mapType === 'kakao' ? '카카오맵' : '구글맵'}으로 전환되었습니다`, 'info');
 }
 
 // 이벤트 리스너 설정
@@ -586,7 +586,7 @@ function setupEventListeners() {
     // 복사 버튼들
     document.getElementById('copyAddress').addEventListener('click', () => {
         const text = document.getElementById('addressText').textContent;
-        copyToClipboard(text, 'Address copied');
+        copyToClipboard(text, '주소가 복사되었습니다');
     });
 
     // document.getElementById('copyLat').addEventListener('click', () => {
@@ -601,14 +601,14 @@ function setupEventListeners() {
 
     document.getElementById('copyCoords').addEventListener('click', () => {
         const text = document.getElementById('coordsText').textContent;
-        copyToClipboard(text, 'Coordinates copied');
+        copyToClipboard(text, '좌표가 복사되었습니다');
     });
 }
 
 // 클립보드 복사
 async function copyToClipboard(text, message) {
-    if (text === '-' || text === 'Click on map' || text === 'Loading address...') {
-        showToast('Nothing to copy', 'warning');
+    if (text === '-' || text === '지도를 클릭하세요' || text === '주소 불러오는 중...') {
+        showToast('복사할 내용이 없습니다', 'warning');
         return;
     }
 
@@ -617,7 +617,7 @@ async function copyToClipboard(text, message) {
         showToast(message, 'success');
     } catch (err) {
         console.error('Copy failed:', err);
-        showToast('Copy failed', 'error');
+        showToast('복사 실패', 'error');
     }
 }
 
