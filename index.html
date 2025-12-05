@@ -11,83 +11,70 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <div class="background-decorations">
-        <div class="circle circle-1"></div>
-        <div class="circle circle-2"></div>
-        <div class="circle circle-3"></div>
+    <div class="map-background">
+        <div id="kakaoMap" class="map-view active"></div>
+        <div id="googleMap" class="map-view"></div>
     </div>
 
-    <div class="container">
-        <header class="fade-in">
-            <h1><span class="gradient-text">📍 카카오맵</span> 좌표 검색</h1>
-            <p>장소명/주소를 검색하거나 지도를 클릭하여 위도/경도를 확인하세요</p>
-        </header>
+    <div class="overlay-container">
+        <div class="floating-card">
+            <header>
+                <h1><span class="gradient-text">Urban</span> Map</h1>
+                <p>Discover locations & coordinates</p>
+            </header>
 
-        <div class="search-section">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="장소명 또는 주소를 입력하세요 (예: 롯데타워, 서울시 강남구 테헤란로)">
-                <button id="searchBtn">검색</button>
+            <div class="map-tabs">
+                <button class="map-tab active" data-map="kakao">Kakao Map</button>
+                <button class="map-tab" data-map="google">Google Map</button>
             </div>
-        </div>
 
-        <div class="content">
-            <div class="map-container">
-                <div class="map-tabs">
-                    <button class="map-tab active" data-map="kakao">카카오맵</button>
-                    <button class="map-tab" data-map="google">구글맵</button>
+            <div class="search-section">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search location...">
+                    <button id="searchBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </button>
                 </div>
-                <div id="kakaoMap" class="map-view active"></div>
-                <div id="googleMap" class="map-view"></div>
             </div>
 
             <div class="info-panel">
-                <div class="info-section">
-                    <h3>📌 선택된 위치 정보</h3>
-                    <div class="info-item">
-                        <label>주소:</label>
-                        <div class="info-value">
-                            <span id="addressText">지도를 클릭하세요</span>
-                            <button class="copy-btn" id="copyAddress" title="주소 복사">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" width="16" height="16"><path d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 192H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
-                            </button>
-                        </div>
+                <div class="info-item">
+                    <label>Address</label>
+                    <div class="info-value">
+                        <span id="addressText">Click on map</span>
+                        <button class="copy-btn" id="copyAddress" title="Copy">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        </button>
                     </div>
+                </div>
+                <div class="info-grid">
                     <div class="info-item">
-                        <label>위도 (Latitude):</label>
+                        <label>Latitude</label>
                         <div class="info-value">
                             <span id="latText">-</span>
-                            <button class="copy-btn" id="copyLat" title="위도 복사">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" width="16" height="16"><path d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 192H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
+                            <button class="copy-btn" id="copyLat" title="Copy">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                             </button>
                         </div>
                     </div>
                     <div class="info-item">
-                        <label>경도 (Longitude):</label>
+                        <label>Longitude</label>
                         <div class="info-value">
                             <span id="lngText">-</span>
-                            <button class="copy-btn" id="copyLng" title="경도 복사">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" width="16" height="16"><path d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 192H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <label>좌표 (위도, 경도):</label>
-                        <div class="info-value">
-                            <span id="coordsText">-</span>
-                            <button class="copy-btn" id="copyCoords" title="좌표 복사">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" width="16" height="16"><path d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 192H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
+                            <button class="copy-btn" id="copyLng" title="Copy">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                             </button>
                         </div>
                     </div>
                 </div>
-
-                <div class="instructions">
-                    <h4>사용 방법</h4>
-                    <ul>
-                        <li>검색창에 장소명 또는 주소를 입력하고 검색하세요</li>
-                        <li>지도를 클릭하여 정확한 위치를 선택하세요</li>
-                        <li>복사 버튼을 클릭하여 정보를 복사하세요</li>
-                    </ul>
+                <div class="info-item hidden">
+                    <label>Coords</label>
+                    <div class="info-value">
+                        <span id="coordsText">-</span>
+                        <button class="copy-btn" id="copyCoords" title="Copy">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
