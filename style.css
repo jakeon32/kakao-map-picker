@@ -10,7 +10,7 @@
     --color-text-muted: #64748b;
     --color-border: #e2e8f0;
     --color-surface: rgba(255, 255, 255, 0.95);
-    
+
     /* Typography */
     --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-display: 'Space Grotesk', sans-serif;
@@ -86,16 +86,22 @@ body {
     width: 100%;
     height: 100%;
     z-index: 10;
-    pointer-events: none; /* Let clicks pass through to map */
+    pointer-events: none;
+    /* Let clicks pass through to map */
     display: flex;
     justify-content: center;
-    align-items: flex-end; /* Bottom aligned on mobile */
-    padding: var(--spacing-lg);
+    align-items: flex-end;
+    /* Bottom aligned on mobile */
+    padding: var(--spacing-sm);
 }
 
 @media (min-width: 768px) {
     .overlay-container {
-        align-items: center; /* Center on desktop */
+        justify-content: flex-start;
+        /* Left aligned on desktop */
+        align-items: flex-start;
+        /* Top aligned */
+        padding: var(--spacing-lg);
     }
 }
 
@@ -109,16 +115,29 @@ body {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-float);
     width: 100%;
-    max-width: 480px;
+    max-width: 400px;
+    /* Slightly narrower for sidebar feel */
     padding: var(--spacing-lg);
-    pointer-events: auto; /* Re-enable clicks */
+    pointer-events: auto;
+    /* Re-enable clicks */
     animation: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     border: 1px solid rgba(255, 255, 255, 0.5);
+    max-height: calc(100vh - 4rem);
+    /* Prevent overflow */
+    overflow-y: auto;
+    /* Scroll if too tall */
 }
 
 @keyframes slide-up {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 /* ========================================
@@ -266,7 +285,8 @@ header p {
 }
 
 .info-value span {
-    font-family: var(--font-primary); /* Changed from mono for cleaner look */
+    font-family: var(--font-primary);
+    /* Changed from mono for cleaner look */
     font-size: 0.95rem;
     font-weight: 500;
     white-space: nowrap;
@@ -328,7 +348,7 @@ header p {
         padding: var(--spacing-sm);
         align-items: flex-end;
     }
-    
+
     .floating-card {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
