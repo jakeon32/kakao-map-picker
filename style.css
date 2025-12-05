@@ -485,8 +485,8 @@ header p {
     box-shadow: var(--shadow-lg);
     position: relative;
     transition: all var(--transition-base);
-    height: calc(100vh - 300px);
-    min-height: 500px;
+    height: 600px;
+    max-height: calc(100vh - 400px);
     display: flex;
     flex-direction: column;
 }
@@ -739,6 +739,7 @@ header p {
 
     .map-container {
         height: 500px;
+        max-height: calc(100vh - 300px);
     }
 }
 
@@ -782,6 +783,7 @@ header p {
 
     .map-container {
         height: 400px;
+        max-height: calc(100vh - 250px);
     }
 
     .circle {
