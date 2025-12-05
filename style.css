@@ -97,11 +97,21 @@ body {
 
 @media (min-width: 768px) {
     .overlay-container {
-        justify-content: flex-start;
-        /* Left aligned on desktop */
-        align-items: flex-start;
-        /* Top aligned */
-        padding: var(--spacing-lg);
+        justify-content: center;
+        /* Center horizontally */
+        align-items: flex-end;
+        /* Bottom aligned */
+        padding-bottom: var(--spacing-lg);
+        /* Space from bottom */
+    }
+
+    .floating-card {
+        width: 50vw;
+        /* 50% of screen width */
+        min-width: 400px;
+        /* Minimum readable width */
+        max-width: 800px;
+        /* Maximum width for ultra-wide screens */
     }
 }
 
