@@ -318,6 +318,21 @@ function searchAddress() {
         return;
     }
 
+    // 위도/경도 패턴 감지 (예: "37.5665, 126.9780" 또는 "37.5665 126.9780")
+    const coordPattern = /^(-?\d+\.?\d*)[,\s]+(-?\d+\.?\d*)$/;
+    const match = keyword.match(coordPattern);
+
+    if (match) {
+        const lat = parseFloat(match[1]);
+        const lng = parseFloat(match[2]);
+
+        // 유효한 위도/경도 범위 확인
+        if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+            searchByCoordinates(lat, lng);
+            return;
+        }
+    }
+
     if (currentMapType === 'kakao' && availableMaps.kakao) {
         searchOnKakaoMap(keyword);
     } else if (currentMapType === 'google' && availableMaps.google) {
@@ -325,6 +340,37 @@ function searchAddress() {
     } else {
         showToast('현재 지도를 사용할 수 없습니다', 'error');
     }
+}
+
+// 좌표로 직접 검색
+function searchByCoordinates(lat, lng) {
+    currentPosition = { lat, lng };
+
+    if (currentMapType === 'kakao' && availableMaps.kakao) {
+        const coords = new kakao.maps.LatLng(lat, lng);
+        kakaoMap.setCenter(coords);
+        updateKakaoMarker(coords);
+        getAddressFromKakaoCoords(coords);
+
+        // 구글맵 동기화
+        if (availableMaps.google && googleMap) {
+            updateGoogleMapPosition(lat, lng);
+            getAddressFromGoogleCoords(lat, lng);
+        }
+    } else if (currentMapType === 'google' && availableMaps.google) {
+        const position = new google.maps.LatLng(lat, lng);
+        googleMap.setCenter(position);
+        updateGoogleMarker(position);
+        getAddressFromGoogleCoords(lat, lng);
+
+        // 카카오맵 동기화
+        if (availableMaps.kakao && kakaoMap) {
+            updateKakaoMapPosition(lat, lng);
+            getAddressFromKakaoCoords(new kakao.maps.LatLng(lat, lng));
+        }
+    }
+
+    showToast('좌표로 이동했습니다', 'success');
 }
 
 // 카카오맵에서 검색

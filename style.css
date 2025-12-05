@@ -119,11 +119,7 @@
         border: 1px solid rgba(14, 165, 233, 0.12);
     }
 
-    .map-container:hover,
-    .info-section:hover,
-    .instructions:hover {
-        border-color: rgba(14, 165, 233, 0.25);
-    }
+    /* Hover effects removed for cleaner UX */
 
     /* 인포 값 배경 조정 */
     .info-value {
@@ -495,11 +491,7 @@ header p {
     flex-direction: column;
 }
 
-.map-container:hover {
-    border-color: rgba(100, 255, 218, 0.2);
-    transform: translateY(-4px);
-    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
-}
+/* Hover effect removed for cleaner UX */
 
 /* Map Tabs */
 .map-tabs {
@@ -575,11 +567,7 @@ header p {
     transition: all var(--transition-base);
 }
 
-.info-section:hover,
-.instructions:hover {
-    border-color: rgba(100, 255, 218, 0.2);
-    transform: translateY(-2px);
-}
+/* Hover effect removed for cleaner UX */
 
 .info-section h3,
 .instructions h4 {
