@@ -457,7 +457,7 @@ header p {
    ======================================== */
 .content {
     display: grid;
-    grid-template-columns: 1fr 420px;
+    grid-template-columns: 1fr 360px;
     gap: var(--spacing-lg);
     margin-bottom: var(--spacing-lg);
     animation: fade-in 0.8s ease-out 0.4s both;
@@ -485,8 +485,8 @@ header p {
     box-shadow: var(--shadow-lg);
     position: relative;
     transition: all var(--transition-base);
-    height: 600px;
-    max-height: calc(100vh - 400px);
+    height: 650px;
+    max-height: calc(100vh - 350px);
     display: flex;
     flex-direction: column;
 }
